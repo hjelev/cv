@@ -7,5 +7,7 @@ check latest software version
 
 * aristocratos/btop
 * hashicorp/terraform
+* flameshot-org/flameshot
+
 
 ## Everything listed on https://endoflife.date
