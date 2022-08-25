@@ -1,11 +1,11 @@
 # cv
 check latest software version
 
-## Supported software
+# Supported software
 
-# Github
+## Github
 
-aristocratos/btop
-hashicorp/terraform
+* aristocratos/btop
+* hashicorp/terraform
 
-# Everything listed on https://endoflife.date
+## Everything listed on https://endoflife.date
