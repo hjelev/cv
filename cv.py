@@ -3,7 +3,8 @@ import json
 import sys
 import db
 
-names = ["btop","java", "nginx", "varnish", "terraform"]
+# list of sofware names to check by default
+names = ["java", "nginx", "varnish", "terraform"]
 github_url = "https://api.github.com/repos/{}/releases/latest"
 github_url_tags = 'https://api.github.com/repos/{}/tags'
 endoflife_url = "https://endoflife.date/api/{}.json"
@@ -78,6 +79,7 @@ def check_github(name):
         print('URLError: {} '.format(e.reason))
         
 def check_versions(names):
+    versions = []
     for name in names:
         if name in db.supported:
             name = db.supported[name]
@@ -85,18 +87,50 @@ def check_versions(names):
         if "/" in name:
             name, version, date = check_github(name)
             print_version(name, version, date)
+            versions.append([name, version, date])
         else:
             name, version, date = check_eoflife(name)
             print_version(name, version, date)
-            
+            versions.append([name, version, date])
+    return(versions)
+    
+def save_html(versions):
+    html_header = """<html><head><title>Versions</title></head>
+    <body>
+    <table class="tg">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Version</th>
+        <th>Release Date</th>
+    </tr>
+    """
+    html_footer = """
+    </tbody>
+    </table>
+    </body>
+    </html>
+    """
+    with open("html/index.html", "w") as txt_file:
+        txt_file.write(html_header)
+        for line in versions:
+            txt_file.write('<tr>\n')
+            for value in line:
+                txt_file.write("<td>{}</td>".format(value) + "\n")
+            txt_file.write('</tr>\n')
+        txt_file.write(html_footer)
+                
 def main():  
     global table   
     global names    
-       
-    if len(sys.argv) >1 and sys.argv[1].startswith('-'):    
+    global html
+
+    table = False
+    html = False       
+    if len(sys.argv) >1 and sys.argv[1] == '-t':    
         table = True
-    else:
-        table = False
+    elif len(sys.argv) >1 and sys.argv[1] == '-html':
+        html = True
 
     if len(sys.argv) >1 and  not sys.argv[1].startswith('-'):
         names = []
@@ -107,7 +141,8 @@ def main():
     else:   
         print("{:<10} {:<10} {:<10}\n".format("Name", "Version", "Release Date"))
     
-    check_versions(names)
-
+    versions = check_versions(names)
+    if html: save_html(versions)
+    
 if __name__ == '__main__':
     main()
