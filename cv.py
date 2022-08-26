@@ -30,14 +30,11 @@ def print_version(name, version, date):
         
 def check_github_tags(name):
     try:
-        print(github_url_tags.format(name))
         with urllib.request.urlopen(github_url_tags.format(name)) as url:
             json_data = json.loads(url.read().decode())
-            date = 'na'
+            date = ' '
             repo_name = name.split('/')[1]
             version = json_data[0]['name']
-            # version = json_data['name'].replace('_','.')
-            # print(json_data['name'].replace('_','.'))
             if 'v' in version:
                 version = json_data['name'].split('v')[1]
             if ')' in version:
@@ -50,6 +47,7 @@ def check_github_tags(name):
             return(repo_name, version, date)
             
     except urllib.error.HTTPError as e:
+        github_url_tags(name)
         print('HTTPError: {} Github tags for {} not found!'.format(e.code, name))
     except urllib.error.URLError as e:
         print('URLError: {} '.format(e.reason))
@@ -73,8 +71,8 @@ def check_github(name):
             return(repo_name, version, date) 
     
     except urllib.error.HTTPError as e:
-        print('HTTPError: {} Github repository {} not found!'.format(e.code, name))
-        return(name, "", "")
+        # print('HTTPError: {} Github repository {} not found!'.format(e.code, name))
+        return(check_github_tags(name))
         
     except urllib.error.URLError as e:
         print('URLError: {} '.format(e.reason))
@@ -85,7 +83,6 @@ def check_versions(names):
             name = db.supported[name]
             
         if "/" in name:
-            # print(check_github(name))
             name, version, date = check_github(name)
             print_version(name, version, date)
         else:
