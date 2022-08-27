@@ -6,11 +6,11 @@ check latest software version
 ## Github
 
 * btop - aristocratos/btop 
-* terraform - hashicorp/terraform
-* flameshot - flameshot-org/flameshot
 * curl - curl/curl
+* flameshot - flameshot-org/flameshot
 * node - nodejs/node
 * nodejs - nodejs/node
+* terraform - hashicorp/terraform
 * vscode - microsoft/vscode
 
 ## Everything listed on https://endoflife.date
