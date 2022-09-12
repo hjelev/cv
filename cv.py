@@ -36,7 +36,7 @@ def check_eoflife(name):
    
 def print_version(versions):
     if table :
-        print("||{:<28}||{:<8}||{:<15}||{}".format("Name", "Version", "Release Date","Link"))
+        print("||{:<28}||{:<8}||{:<15}||{}||".format("Name", "Version", "Release Date","Link"))
     else:   
         print("{:<30} {:<10} {:<15} {}\n".format("Name", "Version", "Release Date", "Link"))
     
