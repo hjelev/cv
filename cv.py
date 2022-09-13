@@ -40,14 +40,18 @@ def print_version(versions):
         print("||{:<28}||{:<8}||{:<15}||{}||".format("Name", "Version", "Release Date","Link"))
     else:   
         print("{:<30} {:<10} {:<15} {}\n".format("Name", "Version", "Release Date", "Link"))
-    
+        
+        
     for version in versions:       
         original_name, name, version, date, link, *_ = version
         if table:
             print("|{:<29}|{:<9}|{:<17}|{:<60}|".format(original_name, version, date, link))
         else:
             print("{:<30} {:<10} {:<15} {}".format(original_name, version, date, link))   
-        
+
+    if len(versions) == 1 and original_name in db.supported:
+        print('\nDescription:')
+        print(get_github_description(db.supported[original_name]))        
         
 def check_github_tags(name):
     try:
@@ -215,7 +219,7 @@ def main():
         print('{} Supported github repositories:\n'.format(len(db.supported)))
         for software in db.supported:
             print('{:<30} - https://github.com/{}'.format(software, db.supported[software])) 
-            print(get_github_description(db.supported[software]))
+            
         return
                
     elif len(sys.argv) >1 and sys.argv[1] == '-html':
@@ -227,6 +231,7 @@ def main():
         names = options
 
     versions = check_versions(names)
+
     print_version(versions)
     
     if html: save_html(versions)
