@@ -7,6 +7,7 @@ import datetime
 # list of sofware names to check by default
 names = ["java", "nginx", "varnish", "terraform", "terraform-provider-myrasec"]
 names.sort()
+github_api = 'https://api.github.com/repos/{}'
 github_url = 'https://api.github.com/repos/{}/releases/latest'
 github_url_tags = 'https://api.github.com/repos/{}/tags'
 endoflife_url = 'https://endoflife.date/api/{}.json'
@@ -71,8 +72,22 @@ def check_github_tags(name):
         print('HTTPError: {} Github tags for {} not found!'.format(e.code, name))
     except urllib.error.URLError as e:
         print('URLError: {} '.format(e.reason))
-          
-                         
+
+
+def get_github_description(repo):          
+    try:
+        with urllib.request.urlopen(github_api.format(repo)) as url:
+            json_data = json.loads(url.read().decode())
+            description = json_data['description']
+            return(description)
+            
+    except urllib.error.HTTPError as e:
+        print('HTTPError: {} Github repository {} not found!'.format(e.code, repo))
+       
+    except urllib.error.URLError as e:
+        print('URLError: {} '.format(e.reason))
+        
+                                                     
 def check_github(name):
     try:
         with urllib.request.urlopen(github_url.format(name)) as url:
@@ -200,6 +215,7 @@ def main():
         print('{} Supported github repositories:\n'.format(len(db.supported)))
         for software in db.supported:
             print('{:<30} - https://github.com/{}'.format(software, db.supported[software])) 
+            print(get_github_description(db.supported[software]))
         return
                
     elif len(sys.argv) >1 and sys.argv[1] == '-html':
