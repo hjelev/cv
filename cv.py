@@ -31,8 +31,10 @@ def check_eoflife(name):
             
     except urllib.error.HTTPError as e:
         print('HTTPError: {} endoflife.date record for {} not found!'.format(e.code, name))
+        exit()
     except urllib.error.URLError as e:
         print('URLError: {} '.format(e.reason))
+        exit()
 
    
 def print_version(versions):
@@ -52,6 +54,7 @@ def print_version(versions):
     if len(versions) == 1 and original_name in db.supported:
         print('\nDescription:')
         print(get_github_description(db.supported[original_name]))        
+      
         
 def check_github_tags(name):
     try:
@@ -103,22 +106,26 @@ def check_github(name):
             
             if 'v' in version:
                 version = json_data['tag_name'].split('v')[1]
-            if ')' in version:
+            elif ')' in version:
                 version = version.split(')')[0]
-            if 'Version' in version:
+            elif 'Version' in version:
                 version = version.split(' ')[2]
-            if '-' in version:
+            elif '-' in version:
                 version = version.split('-')[1]
+            elif 'n' in version:
+                version = version.split('n')[1]
             
             return(repo_name, version, date, link) 
     
     except urllib.error.HTTPError as e:
         print('HTTPError: {} Github repository {} not found!'.format(e.code, name))
+        exit()
         # return(check_github_tags(name))
         
     except urllib.error.URLError as e:
         print('URLError: {} '.format(e.reason))
-        
+        exit()
+   
         
 def check_versions(names):    
     versions = []
@@ -215,7 +222,7 @@ def main():
         print(endoflife_url)
         return
         
-    elif len(sys.argv) >1 and sys.argv[1] == '-all':
+    elif len(sys.argv) >1 and (sys.argv[1] == '--all' or sys.argv[1] == '-a'):
         print('{} Supported github repositories:\n'.format(len(db.supported)))
         for software in db.supported:
             print('{:<30} - https://github.com/{}'.format(software, db.supported[software])) 
@@ -229,7 +236,29 @@ def main():
         options = list(sys.argv)
         options.pop(0)
         names = options
-
+    elif len(sys.argv) >1 and (sys.argv[1] == '-h' or sys.argv[1] == '--help'):
+        help = '''
+    Usage:  cv [OPTION]
+            or:  cv [SOFTWARE]
+            or:  cv [SOFTWARE]... 
+       
+    Checks SOFTWARE(S) latest version and release date using different APIs
+    
+    Options:
+        -a, --all  - list all supported github repositories
+        -html      - generates html file with versions
+        -t         - prints the result as markdown table
+        -h, --help - shows this message
+    
+    Examples:
+        cv
+        cv nginx
+        cv apache nginx vue
+        cv -all
+        '''
+        print(help)
+        exit()
+        
     versions = check_versions(names)
 
     print_version(versions)

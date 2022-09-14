@@ -1,7 +1,23 @@
 # cv
 
-check latest software version
+Checks SOFTWARE(S) latest version and release date using different APIs
 
+Usage:  cv [OPTION]
+        or:  cv [SOFTWARE]
+        or:  cv [SOFTWARE]... 
+    
+Options:
+    -a, --all  - list all supported github repositories
+    -html      - generates html file with versions
+    -t         - prints the result as markdown table
+    -h, --help - shows this message
+
+Examples:
+    cv
+    cv nginx
+    cv apache nginx vue
+    cv -all
+        
 # Supported software
 
 ## Github

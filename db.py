@@ -36,4 +36,7 @@ supported = {
     'terraform':'hashicorp/terraform',
     'vscode':'microsoft/vscode',
     'vue':'VUE/VUE',
+    'tarantool':'tarantool/tarantool',
+    'ember.js':'emberjs/ember.js',
+    'ffmpeg':'FFmpeg/FFmpeg',
 }
