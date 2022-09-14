@@ -63,7 +63,8 @@ Check a list of software for its latest version and release date using different
 ## Everything listed on <https://endoflife.date>
 
 Example script output:
-    # cv
+
+    > cv
     Name                           Version    Release Date    Link
 
     apache                         2.4.54     2012-02-21      https://downloads.apache.org/httpd/Announcement2.4.html
@@ -72,7 +73,7 @@ Example script output:
     terraform                      1.2.9      2022-09-07      https://github.com/hashicorp/terraform/releases/tag/v1.2.9
     vue                            3.3.0      2015-10-08      https://github.com/VUE/VUE/releases/tag/3.3.0
 
-    # cv fff                                                  
+    > cv fff                                                  
     Name                           Version    Release Date    Link
 
     fff                            2.2        2020-09-17      https://github.com/dylanaraps/fff/releases/tag/2.2
@@ -80,7 +81,7 @@ Example script output:
     Description:
     📁 A simple file manager written in bash.
 
-    # cv apache php nginx 
+    > cv apache php nginx 
     Name                           Version    Release Date    Link
 
     apache                         2.4.54     2012-02-21      https://downloads.apache.org/httpd/Announcement2.4.html
