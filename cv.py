@@ -5,7 +5,7 @@ import db
 import datetime
 
 # list of sofware names to check by default
-names = ["java", "nginx", "varnish", "terraform", "terraform-provider-myrasec"]
+names = ["php", "nginx", "apache", "terraform", "vue"]
 names.sort()
 github_api = 'https://api.github.com/repos/{}'
 github_url = 'https://api.github.com/repos/{}/releases/latest'

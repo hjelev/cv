@@ -1,6 +1,6 @@
 # cv
 
-Checks SOFTWARE(S) latest version and release date using different APIs
+Check a list of software for its latest version and release date using different APIs.
 
     Usage:  cv [OPTION]
             or:  cv [SOFTWARE]
@@ -61,3 +61,12 @@ Checks SOFTWARE(S) latest version and release date using different APIs
 - vue - <https://github.com/VUE/VUE>
 
 ## Everything listed on <https://endoflife.date>
+
+Example script output:
+
+||Name                        ||Version ||Release Date   ||Link||
+|apache                       |2.4.54   |2012-02-21       |https://downloads.apache.org/httpd/Announcement2.4.html     |
+|nginx                        |1.23.1   |2022-06-21       |https://nginx.org/en/CHANGES                                |
+|php                          |8.1.10   |2021-11-23       |https://endoflife.date/php                                  |
+|terraform                    |1.2.9    |2022-09-07       |https://github.com/hashicorp/terraform/releases/tag/v1.2.9  |
+|vue                          |3.3.0    |2015-10-08       |https://github.com/VUE/VUE/releases/tag/3.3.0               |
