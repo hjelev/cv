@@ -4,8 +4,10 @@ import sys
 import db
 import datetime
 import os
+import collections
+
 # list of sofware names to check by default
-names = ["php", "nginx", "apache", "terraform", "vue"]
+names = ["php", "nginx"]
 names.sort()
 github_api = 'https://api.github.com/repos/{}'
 github_url = 'https://api.github.com/repos/{}/releases/latest'
@@ -22,13 +24,14 @@ Checks SOFTWARE(S) latest version and release date using different APIs
 Options:
     -a, --all    - list all supported github repositories
     --html       - generates html file with versions
-    -t           - prints the result as markdown table
+    -t           - prints the result as markdown/jira table
     -s, --silent - display only the version
     -h, --help   - shows this message
 
 Examples:
     cv
     cv nginx
+    cv -s nginx
     cv apache nginx vue
     cv -all'''
 
@@ -85,9 +88,10 @@ def check_github_tags(name):
             json_data = json.loads(url.read().decode())
             date = ' '
             repo_name = name.split('/')[1]
+            print(str(json_data))
             version = json_data[0]['name']
             if 'v' in version:
-                version = json_data['name'].split('v')[1]
+                version = json_data[0]['name'].split('v')[1]
             if ')' in version:
                 version = version.split(')')[0]
             if 'Version' in version:
@@ -95,7 +99,7 @@ def check_github_tags(name):
             if '-' in version:
                 version = version.split('-')[1]
 
-            return(repo_name, version, date)
+            return(repo_name, version, " ", " ")
             
     except urllib.error.HTTPError as e:
         github_url_tags(name)
@@ -134,16 +138,18 @@ def check_github(name):
             elif 'Version' in version:
                 version = version.split(' ')[2]
             elif '-' in version:
-                version = version.split('-')[1]
+                if any(c.isalpha() for c in version.split('-')):
+                    version = version.split('-')[1]
+                else:
+                    version = version.split('-')[0]                   
             elif 'n' in version:
                 version = version.split('n')[1]
             
             return(repo_name, version, date, link) 
     
     except urllib.error.HTTPError as e:
-        print('HTTPError: {} Github repository {} not found!'.format(e.code, name))
-        exit()
-        # return(check_github_tags(name))
+        # print('HTTPError: {} Github repository {} not found!'.format(e.code, name))
+        return(check_github_tags(name))
         
     except urllib.error.URLError as e:
         print('URLError: {} '.format(e.reason))
@@ -232,13 +238,14 @@ def save_html(versions, html_file):
 def main():  
     global table   
     global names    
-    global html
+    # global html
     silent = False
     table = False
     html = False  
          
     if len(sys.argv) >1 and sys.argv[1] == '-t':    
         table = True
+        
     elif len(sys.argv) >1 and sys.argv[1] == '-l':    
         print(github_url)
         print(github_url_tags)
@@ -246,35 +253,29 @@ def main():
         return
         
     elif len(sys.argv) >1 and (sys.argv[1] == '--all' or sys.argv[1] == '-a'):
-        print('{} Supported github repositories:\n'.format(len(db.supported)))
-        for software in db.supported:
-            print('{:<30} - https://github.com/{}'.format(software, db.supported[software])) 
-            
+        print('{} Supported github repositories:\n'.format(len(db.supported)))       
+        for software in collections.OrderedDict(sorted(db.supported.items())):
+            print('{:<30} - https://github.com/{}'.format(software, db.supported[software]))           
         return
                
     elif len(sys.argv) >1 and sys.argv[1] == '--html':
         html = True
-        options = list(sys.argv)
-        options.pop(0)
-        options.pop(0)
-        names = options
+        names = list(sys.argv)[2:]
                       
     elif len(sys.argv) >1 and (sys.argv[1] == '--silent' or sys.argv[1] == '-s'):
         silent = True
-        options = list(sys.argv)
-        options.pop(0)
-        options.pop(0)
-        names = options
+        names = list(sys.argv)[2:]
         
     elif len(sys.argv) >1 and not sys.argv[1].startswith('-'):
-        options = list(sys.argv)
-        options.pop(0)
-        names = options
+        names = list(sys.argv)[1:]
         
     elif len(sys.argv) >1 and (sys.argv[1] == '-h' or sys.argv[1] == '--help'):
         print(help)
-        exit()
+        return()
         
+    elif len(sys.argv) >1 and sys.argv[1].startswith('-'):
+        print('Unrecognized option: {} \ncheck cv --help'.format(sys.argv[1]))
+        return
     versions = check_versions(names)
 
     if html: 
