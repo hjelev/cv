@@ -19,58 +19,58 @@ Check a list of software for its latest version and release date using different
         cv -s nginx
         cv apache nginx vue
         cv -all
-        
+
 # Supported software
 
 ## Github
 
-     -  adguardhome - https://github.com/AdguardTeam/AdGuardHome
-     -  angular - https://github.com/angular/angular
-     -  bat - https://github.com/sharkdp/bat
-     -  bootstrap - https://github.com/twbs/bootstrap
-     -  bootstrap - https://github.com/twbs/bootstrap
-     -  bpytop - https://github.com/aristocratos/bpytop
-     -  btop - https://github.com/aristocratos/btop 
-     -  calibre - https://github.com/kovidgoyal/calibre
-     -  curl - https://github.com/curl/curl
-     -  cv - https://github.com/hjelev/cv
-     -  drawio - https://github.com/jgraph/drawio
-     -  duf - https://github.com/muesli/duf
-     -  elixir - https://github.com/elixir-lang/elixir
-     -  ember.js - https://github.com/emberjs/ember.js
-     -  exa - https://github.com/ogham/exa
-     -  fd - https://github.com/sharkdp/fd
-     -  fff - https://github.com/dylanaraps/fff
-     -  ffmpeg - https://github.com/FFmpeg/FFmpeg
-     -  flameshot - https://github.com/flameshot-org/flameshot
-     -  greenshot - https://github.com/greenshot/greenshot
-     -  helm - https://github.com/helm/helm
-     -  home-assistant - https://github.com/home-assistant/core
-     -  httpie - https://github.com/httpie/httpie
-     -  imagemagick - https://github.com/ImageMagick/ImageMagick
-     -  imagemagick6 - https://github.com/ImageMagick/ImageMagick6
-     -  jinja - https://github.com/pallets/jinja
-     -  joomla - https://github.com/joomla/joomla-cms
-     -  jq - https://github.com/stedolan/jq
-     -  jquery - https://github.com/jquery/jquery
-     -  k9s - https://github.com/derailed/k9s
-     -  kubernetes - https://github.com/kubernetes/kubernetes
-     -  nextcloud-desktop - https://github.com/nextcloud/desktop
-     -  nextcloud-server - https://github.com/nextcloud/server
-     -  node - https://github.com/nodejs/node
-     -  nodejs - https://github.com/nodejs/node
-     -  pelican - https://github.com/getpelican/pelican
-     -  pi-hole - https://github.com/pi-hole/pi-hole
-     -  popeye - https://github.com/derailed/popeye
-     -  rails - https://github.com/rails/rails
-     -  react - https://github.com/facebook/react
-     -  redis - https://github.com/redis/redis
-     -  rpi-mqtt-monitor - https://github.com/hjelev/rpi-mqtt-monitor
-     -  tarantool - https://github.com/tarantool/tarantool
-     -  terraform-provider-myrasec - https://github.com/Myra-Security-GmbH/terraform-provider-myrasec
-     -  terraform - https://github.com/hashicorp/terraform
-     -  vscode - https://github.com/microsoft/vscode
-     -  vue - https://github.com/VUE/VUE
+- adguardhome - <https://github.com/AdguardTeam/AdGuardHome>
+- angular - <https://github.com/angular/angular>
+- bat - <https://github.com/sharkdp/bat>
+- bootstrap - <https://github.com/twbs/bootstrap>
+- bootstrap - <https://github.com/twbs/bootstrap>
+- bpytop - <https://github.com/aristocratos/bpytop>
+- btop - <https://github.com/aristocratos/btop>
+- calibre - <https://github.com/kovidgoyal/calibre>
+- curl - <https://github.com/curl/curl>
+- cv - <https://github.com/hjelev/cv>
+- drawio - <https://github.com/jgraph/drawio>
+- duf - <https://github.com/muesli/duf>
+- elixir - <https://github.com/elixir-lang/elixir>
+- ember.js - <https://github.com/emberjs/ember.js>
+- exa - <https://github.com/ogham/exa>
+- fd - <https://github.com/sharkdp/fd>
+- fff - <https://github.com/dylanaraps/fff>
+- ffmpeg - <https://github.com/FFmpeg/FFmpeg>
+- flameshot - <https://github.com/flameshot-org/flameshot>
+- greenshot - <https://github.com/greenshot/greenshot>
+- helm - <https://github.com/helm/helm>
+- home-assistant - <https://github.com/home-assistant/core>
+- httpie - <https://github.com/httpie/httpie>
+- imagemagick - <https://github.com/ImageMagick/ImageMagick>
+- imagemagick6 - <https://github.com/ImageMagick/ImageMagick6>
+- jinja - <https://github.com/pallets/jinja>
+- joomla - <https://github.com/joomla/joomla-cms>
+- jq - <https://github.com/stedolan/jq>
+- jquery - <https://github.com/jquery/jquery>
+- k9s - <https://github.com/derailed/k9s>
+- kubernetes - <https://github.com/kubernetes/kubernetes>
+- nextcloud-desktop - <https://github.com/nextcloud/desktop>
+- nextcloud-server - <https://github.com/nextcloud/server>
+- node - <https://github.com/nodejs/node>
+- nodejs - <https://github.com/nodejs/node>
+- pelican - <https://github.com/getpelican/pelican>
+- pi-hole - <https://github.com/pi-hole/pi-hole>
+- popeye - <https://github.com/derailed/popeye>
+- rails - <https://github.com/rails/rails>
+- react - <https://github.com/facebook/react>
+- redis - <https://github.com/redis/redis>
+- rpi-mqtt-monitor - <https://github.com/hjelev/rpi-mqtt-monitor>
+- tarantool - <https://github.com/tarantool/tarantool>
+- terraform-provider-myrasec - <https://github.com/Myra-Security-GmbH/terraform-provider-myrasec>
+- terraform - <https://github.com/hashicorp/terraform>
+- vscode - <https://github.com/microsoft/vscode>
+- vue - <https://github.com/VUE/VUE>
 
 ## Everything listed on <https://endoflife.date>
 
