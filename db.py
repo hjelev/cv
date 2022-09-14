@@ -13,6 +13,7 @@ supported = {
     'greenshot':'greenshot/greenshot',
     'helm':'helm/helm',
     'httpie':'httpie/httpie',
+    'jinja':'pallets/jinja',
     'joomla':'joomla/joomla-cms',
     'jq':'stedolan/jq',
     'jquery':'jquery/jquery',
@@ -29,4 +30,6 @@ supported = {
     'terraform':'hashicorp/terraform',
     'vscode':'microsoft/vscode',
     'vue':'VUE/VUE',
+    'adguardhome':'AdguardTeam/AdGuardHome',
+    'pi-hole':'pi-hole/pi-hole',
 }
