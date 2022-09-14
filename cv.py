@@ -3,7 +3,7 @@ import json
 import sys
 import db
 import datetime
-
+import os
 # list of sofware names to check by default
 names = ["php", "nginx", "apache", "terraform", "vue"]
 names.sort()
@@ -11,7 +11,26 @@ github_api = 'https://api.github.com/repos/{}'
 github_url = 'https://api.github.com/repos/{}/releases/latest'
 github_url_tags = 'https://api.github.com/repos/{}/tags'
 endoflife_url = 'https://endoflife.date/api/{}.json'
+html_file = os.path.join(sys.path[0], "html/index.html")
 
+help = '''Usage:  cv [OPTION] [SOFTWARE]...
+    or:  cv [SOFTWARE]...
+    or:  cv
+    
+Checks SOFTWARE(S) latest version and release date using different APIs
+
+Options:
+    -a, --all    - list all supported github repositories
+    --html       - generates html file with versions
+    -t           - prints the result as markdown table
+    -s, --silent - display only the version
+    -h, --help   - shows this message
+
+Examples:
+    cv
+    cv nginx
+    cv apache nginx vue
+    cv -all'''
 
 def check_eoflife(name):
     try:
@@ -37,9 +56,11 @@ def check_eoflife(name):
         exit()
 
    
-def print_version(versions):
+def print_version(versions, silent):
     if table :
         print("||{:<28}||{:<8}||{:<15}||{}||".format("Name", "Version", "Release Date","Link"))
+    elif silent:
+        pass
     else:   
         print("{:<30} {:<10} {:<15} {}\n".format("Name", "Version", "Release Date", "Link"))
         
@@ -48,10 +69,12 @@ def print_version(versions):
         original_name, name, version, date, link, *_ = version
         if table:
             print("|{:<29}|{:<9}|{:<17}|{:<60}|".format(original_name, version, date, link))
+        elif silent:
+            print("{:<9}".format( version))
         else:
             print("{:<30} {:<10} {:<15} {}".format(original_name, version, date, link))   
 
-    if len(versions) == 1 and original_name in db.supported:
+    if len(versions) == 1 and original_name in db.supported and not silent:
         print('\nDescription:')
         print(get_github_description(db.supported[original_name]))        
       
@@ -144,7 +167,7 @@ def check_versions(names):
     return(versions)
     
     
-def save_html(versions):
+def save_html(versions, html_file):
 
     html_header = """<html>
 <head>
@@ -186,8 +209,7 @@ def save_html(versions):
     """
     e = datetime.datetime.now()
     timestamp = "<p><small>Versions checked on %s/%s/%s at %s:%s:%s.</small></p>" % (e.day, e.month, e.year, e.hour, e.minute, e.second)
-
-    with open("html/index.html", "w") as txt_file:
+    with open( html_file, "w") as txt_file:
         txt_file.write(html_header)
         link = False
         for line in versions:
@@ -211,6 +233,7 @@ def main():
     global table   
     global names    
     global html
+    silent = False
     table = False
     html = False  
          
@@ -229,42 +252,36 @@ def main():
             
         return
                
-    elif len(sys.argv) >1 and sys.argv[1] == '-html':
+    elif len(sys.argv) >1 and sys.argv[1] == '--html':
         html = True
-
+        options = list(sys.argv)
+        options.pop(0)
+        options.pop(0)
+        names = options
+                      
+    elif len(sys.argv) >1 and (sys.argv[1] == '--silent' or sys.argv[1] == '-s'):
+        silent = True
+        options = list(sys.argv)
+        options.pop(0)
+        options.pop(0)
+        names = options
+        
     elif len(sys.argv) >1 and not sys.argv[1].startswith('-'):
         options = list(sys.argv)
         options.pop(0)
         names = options
+        
     elif len(sys.argv) >1 and (sys.argv[1] == '-h' or sys.argv[1] == '--help'):
-        help = '''
-    Usage:  cv [OPTION]
-            or:  cv [SOFTWARE]
-            or:  cv [SOFTWARE]... 
-       
-    Checks SOFTWARE(S) latest version and release date using different APIs
-    
-    Options:
-        -a, --all  - list all supported github repositories
-        -html      - generates html file with versions
-        -t         - prints the result as markdown table
-        -h, --help - shows this message
-    
-    Examples:
-        cv
-        cv nginx
-        cv apache nginx vue
-        cv -all
-        '''
         print(help)
         exit()
         
     versions = check_versions(names)
 
-    print_version(versions)
-    
-    if html: save_html(versions)
-
+    if html: 
+        save_html(versions, html_file)
+        print('HTML saved as: {}'.format(html_file))
+    else:
+        print_version(versions, silent)
 
 if __name__ == '__main__':
     main()
