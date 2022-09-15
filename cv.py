@@ -88,7 +88,6 @@ def check_github_tags(name):
             json_data = json.loads(url.read().decode())
             date = ' '
             repo_name = name.split('/')[1]
-            print(str(json_data))
             version = json_data[0]['name']
             if 'v' in version:
                 version = json_data[0]['name'].split('v')[1]
