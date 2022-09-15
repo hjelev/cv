@@ -51,4 +51,11 @@ supported = {
     'proton':'ValveSoftware/Proton',
     'openvr':'ValveSoftware/openvr',
     'steam-audio':'ValveSoftware/steam-audio',
+    'charts':'danielgindi/Charts',
+    'glog':'google/glog',
+    'powertoys':'microsoft/PowerToys',
+    'zinc':'zinclabs/zinc',
+    'kind':'kubernetes-sigs/kind',
+    'kops':'kubernetes/kops',
+    'metalk8s':'scality/metalk8s',
 }

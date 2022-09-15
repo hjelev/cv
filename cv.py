@@ -7,7 +7,7 @@ import os
 import collections
 
 # list of sofware names to check by default
-names = ["php", "nginx"]
+names = ["php", "nginx", "apache"]
 names.sort()
 github_api = 'https://api.github.com/repos/{}'
 github_url = 'https://api.github.com/repos/{}/releases/latest'
@@ -78,8 +78,7 @@ def print_version(versions, silent):
             print("{:<30} {:<10} {:<15} {}".format(original_name, version, date, link))   
 
     if len(versions) == 1 and original_name in db.supported and not silent:
-        print('\nDescription:')
-        print(get_github_description(db.supported[original_name]))        
+        print('\nDescription: ' + get_github_description(db.supported[original_name]))        
       
         
 def check_github_tags(name):
@@ -175,42 +174,42 @@ def check_versions(names):
 def save_html(versions, html_file):
 
     html_header = """<html>
-<head>
-    <title>Versions</title>
-    <style>
-        html {
-            font-family: 'helvetica neue', helvetica, arial, sans-serif;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
+    <head>
+        <title>Versions</title>
+        <style>
+            html {
+                font-family: 'helvetica neue', helvetica, arial, sans-serif;
+            }
+            table {
+                border-collapse: collapse;
+                width: 100%;
+            }
 
-        th, td {
-            text-align: left;
-            padding: 8px;
-        }
+            th, td {
+                text-align: left;
+                padding: 8px;
+            }
 
-        tr:nth-child(even) {
-            background-color: #D6EEEE;
-        }
-    </style>
-</head>
-<body>
-    <table class="tg">
-    <thead>
-        <tr>
-            <th>Software Name</th>
-            <th>Latest Version</th>
-            <th>Release Date</th>
-        </tr>
+            tr:nth-child(even) {
+                background-color: #D6EEEE;
+            }
+        </style>
+    </head>
+    <body>
+        <table class="tg">
+        <thead>
+            <tr>
+                <th>Software Name</th>
+                <th>Latest Version</th>
+                <th>Release Date</th>
+            </tr>
     """
     html_footer = """
-    </tbody>
-    </table>
-    {}
-</body>
-</html>
+        </tbody>
+        </table>
+        {}
+        </body>
+        </html>
     """
     e = datetime.datetime.now()
     timestamp = "<p><small>Versions checked on %s/%s/%s at %s:%s:%s.</small></p>" % (e.day, e.month, e.year, e.hour, e.minute, e.second)
@@ -270,11 +269,12 @@ def main():
         
     elif len(sys.argv) >1 and (sys.argv[1] == '-h' or sys.argv[1] == '--help'):
         print(help)
-        return()
+        return
         
     elif len(sys.argv) >1 and sys.argv[1].startswith('-'):
         print('Unrecognized option: {} \ncheck cv --help'.format(sys.argv[1]))
         return
+        
     versions = check_versions(names)
 
     if html: 
