@@ -142,7 +142,12 @@ def check_github(name):
                     version = version.split('-')[0]                   
             elif 'n' in version:
                 version = version.split('n')[1]
-            
+            elif '@' in version:
+                version = version.split('@')[1]
+                
+            if '_' in version:
+                version = version.split('_')[0]
+                
             return(repo_name, version, date, link) 
     
     except urllib.error.HTTPError as e:
@@ -250,10 +255,10 @@ def main():
         print(endoflife_url)
         return
         
-    elif len(sys.argv) >1 and (sys.argv[1] == '--all' or sys.argv[1] == '-a'):
-        print('{} Supported github repositories:\n'.format(len(db.supported)))       
+    elif len(sys.argv) >1 and (sys.argv[1] == '--all' or sys.argv[1] == '-a'):      
         for software in collections.OrderedDict(sorted(db.supported.items())):
-            print('{:<30} - https://github.com/{}'.format(software, db.supported[software]))           
+            print('{:<30} - https://github.com/{}'.format(software, db.supported[software]))     
+        print('\n{} Supported github repositories'.format(len(db.supported)))       
         return
                
     elif len(sys.argv) >1 and sys.argv[1] == '--html':
