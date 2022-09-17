@@ -1,3 +1,4 @@
+from re import I
 import urllib.request, urllib.error
 import json
 import sys
@@ -32,8 +33,9 @@ def check_eoflife(name):
             return(name, version, date, link) 
             
     except urllib.error.HTTPError as e:
-        print('HTTPError: {} endoflife.date record for {} not found!'.format(e.code, name))
-        exit()
+        search_supported(name)
+        # print('HTTPError: {} endoflife.date record for {} not found!'.format(e.code, name))
+        # exit()
     except urllib.error.URLError as e:
         print('URLError: {} '.format(e.reason))
         exit()
@@ -51,38 +53,65 @@ def print_version(versions, options):
     for version in versions:       
         original_name, name, version, date, link, *_ = version
         if 'table' in options:
-            print("|{:<29}|{:<9}|{:<17}|{:<60}|".format(original_name, version, date, link))
+            print("|{:<29}|{:<9}|{:<17}|{:<60}|".format(name, version, date, link))
         elif 'silent' in options:
             print("{:<9}".format( version))
         else:
-            print("{:<30} {:<10} {:<15} {}".format(original_name, version, date, link))   
+            print("{:<30} {:<10} {:<15} {}".format(name, version, date, link))   
 
-    if len(versions) == 1 and original_name in db.supported and not 'silent' in options and not 'simple' in options:
+    if len(versions) == 1 and original_name in db.supported and \
+                                    not 'silent' in options and \
+                                    not 'simple' in options and \
+                                    not 'table' in options:
         print('\nDescription: ' + get_github_description(db.supported[original_name]))        
       
-        
+def has_numbers(inputString):
+    return any(char.isdigit() for char in inputString)
+            
 def check_github_tags(name):
     try:
         with urllib.request.urlopen(github_url_tags.format(name)) as url:
             json_data = json.loads(url.read().decode())
-            date = ' '
+            for tag_data in reversed(json_data):
+                if has_numbers(tag_data['name']) and 'dev' not in tag_data['name']\
+                                                 and 'alpha' not in tag_data['name']\
+                                                 and 'dev' not in tag_data['name']:
+                    json_data = tag_data
+                    
+            date = json_data['commit']['url']
+
+            with urllib.request.urlopen(date) as url:
+                json_data_tag = json.loads(url.read().decode())
+                date = json_data_tag['commit']['author']['date'].split('T')[0]
+
             repo_name = name.split('/')[1]
-            version = json_data[0]['name']
+            version = json_data['name']
+
             if 'v' in version:
-                version = json_data[0]['name'].split('v')[1]
+                version = json_data['name'].split('v')[1]
             if ')' in version:
                 version = version.split(')')[0]
-            if 'Version' in version:
+            if 'version' in version.lower():
                 version = version.split(' ')[2]
             if '-' in version:
                 for v in version.split('-'):                
                     if not any(c.isalpha() for c in v):
                         version = v
-
-            return(repo_name, version, " ", " ")
+            if '/' in version:
+                 for v in version.split('/'):                
+                    if not any(c.isalpha() for c in v):
+                        version = v  
+            link = f'https://github.com/{name}'
+            if repo_name == 'nginx': link = 'https://nginx.org/en/CHANGES'
+            
+            return(repo_name, version, date, link)
             
     except urllib.error.HTTPError as e:
+        if e.code == 403:
+            print('Github API rate limit exceeded')
+            exit()
         print('HTTPError: {} Github tags for {} not found!'.format(e.code, name))
+        exit()
     except urllib.error.URLError as e:
         print('URLError: {} '.format(e.reason))
 
@@ -95,6 +124,9 @@ def get_github_description(repo):
             return(description)
             
     except urllib.error.HTTPError as e:
+        if e.code == 403:
+            print('Github API rate limit exceeded')
+            exit()
         print('HTTPError: {} Github repository {} not found!'.format(e.code, repo))
        
     except urllib.error.URLError as e:
@@ -120,7 +152,10 @@ def check_github(name):
                 for v in version.split('-'):                
                     if not any(c.isalpha() for c in v):
                         version = v
-                 
+            elif '/' in version:
+                 for v in version.split('/'):                
+                    if not any(c.isalpha() for c in v):
+                        version = v                    
             elif 'n' in version:
                 version = version.split('n')[1]
             elif '@' in version:
@@ -133,7 +168,12 @@ def check_github(name):
     
     except urllib.error.HTTPError as e:
         # print('HTTPError: {} Github repository {} not found!'.format(e.code, name))
-        return(check_github_tags(name))
+        if e.code == 403:
+            print('Github API rate limit exceeded')
+            exit()
+        elif e.code == 404:
+            return(check_github_tags(name))
+        else: exit()
         
     except urllib.error.URLError as e:
         print('URLError: {} '.format(e.reason))
@@ -160,10 +200,8 @@ def check_versions(names):
 def save_html(versions, html_file, options):
 
     e = datetime.datetime.now()
-    timestamp = "<p><small>Versions checked on %s/%s/%s at %s:%s:%s.</small></p>" % (e.day, e.month, e.year, e.hour, e.minute, e.second)
+    timestamp = f"<p><small>Versions checked on {e.day}/{e.month}/{e.year} at {e.hour}:{e.minute}:{e.second}.</small></p>"
     html_content = db.html_header
-    
-
     link = False
     for line in versions:
         if len(line) > 3:
@@ -194,20 +232,30 @@ def save_html(versions, html_file, options):
 def check_arguments(arguments):
     arguments.pop(0)
     args = []
-    names = []
-    
+    names = []  
     for arg in arguments:
         if arg.startswith('-'): args.append(arg)
         else: names.append(arg)
     if len(names) < 1 : names = default_names
     
     return(args, names)
-    
 
-def process_args(args):
-    valid_args = ['-p', '--print', '-a', '--all', '-h', '--help', '--html', '-s', '--silent', '-t', '--table', '-l', '-S', '--simple'] 
-    options = []
-    
+
+def search_supported(name):
+        found = False
+        for n, value in db.supported.items():
+            if name in value:
+                print('{:<30} - https://github.com/{}'.format(n, value))
+                found = True
+        if not found : print(f'Found no software like {name}!')
+        exit()    
+
+def process_args(args, names):
+    valid_args = ['-p', '--print', '-a', '--all', '-h', \
+                  '--help', '--html', '-s', '--silent', \
+                  '-t', '--table', '-l', '-S', '--simple',\
+                  '-f', '--find'] 
+    options = []    
     if '-h' in args or '--help' in args:
         print(db.help)
         exit()
@@ -231,10 +279,11 @@ def process_args(args):
         options.append('simple')
     elif '-p' in args or '--print' in args:
         options.append('print html')
-            
+    elif '-f' in args or '--find' in args:
+        search_supported(names[0])
     for arg in args:
         if arg not in valid_args: 
-            print('Unrecognized option: {} \ncheck cv --help'.format(arg))
+            print(f'Unrecognized option: {arg} \ncheck: cv --help')
             exit()      
             
     return(options)
@@ -242,7 +291,7 @@ def process_args(args):
     
 def main():      
     args, names = check_arguments(sys.argv)
-    options = process_args(args)            
+    options = process_args(args, names)            
     versions = check_versions(names)
 
     if 'html' in options or 'print html' in options: 

@@ -11,6 +11,7 @@ Options:
     -t           - prints the result as markdown/jira table
     -s, --silent - display only the version
     -S, --simple - hide header and description
+    -f, --find   - search supported software list
     -h, --help   - shows this message
 
 Examples:
@@ -62,6 +63,11 @@ html_footer = """
 supported = {
     'adguardhome':'AdguardTeam/AdGuardHome',
     'angular':'angular/angular',
+    'ansible':'ansible/ansible',
+    'apache-airflow':'apache/airflow',
+    'apache-hbase':'apache/hbase',
+    'apache-log4j':'apache/logging-log4j2',
+    'apache-tomcat':'apache/tomcat',
     'astro':'withastro/astro',
     'bat':'sharkdp/bat',
     'bootkube':'kubernetes-retired/bootkube',
@@ -76,6 +82,7 @@ supported = {
     'd3':'d3/d3',
     'drawio':'jgraph/drawio',
     'duf':'muesli/duf',
+    'electron':'electron/electron',
     'elixir':'elixir-lang/elixir',
     'ember.js':'emberjs/ember.js',
     'exa':'ogham/exa',
@@ -85,16 +92,21 @@ supported = {
     'flagger':'fluxcd/flagger',
     'flameshot':'flameshot-org/flameshot',
     'gardener':'gardener/gardener',
+    'gitlab':'gitlabhq/gitlabhq',
     'glog':'google/glog',
+    'godot':'godotengine/godot',
     'greenshot':'greenshot/greenshot',
+    'haproxy':'haproxy/haproxy',
     'headscale':'juanfont/headscale',
     'helix':'helix-editor/helix',
     'helm':'helm/helm',
     'home-assistant':'home-assistant/core',
     'httpie':'httpie/httpie',
+    'hyper':'vercel/hyper',
     'imagemagick':'ImageMagick/ImageMagick',
     'imagemagick6':'ImageMagick/ImageMagick6',
     'immich':'immich-app/immich',
+    'jenkins':'jenkinsci/jenkins',
     'jinja':'pallets/jinja',
     'joomla':'joomla/joomla-cms',
     'jq':'stedolan/jq',
@@ -108,9 +120,13 @@ supported = {
     'lapce':'lapce/lapce',
     'lazydocker':'jesseduffield/lazydocker',
     'lazygit':'jesseduffield/lazygit',
+    'lua':'lua/lua',
     'metalk8s':'scality/metalk8s',
+    'next.js':'vercel/next.js',
     'nextcloud-desktop':'nextcloud/desktop',
     'nextcloud-server':'nextcloud/server',
+    'nginx':'nginx/nginx',
+    'nix':'NixOS/nix',
     'node':'nodejs/node',
     'nodejs':'nodejs/node',
     'nomad':'hashicorp/nomad',
@@ -133,6 +149,7 @@ supported = {
     'redis':'redis/redis',
     'revanced':'revanced/revanced-manager',
     'rocketchat':'RocketChat/Rocket.Chat',
+    'rook':'rook/rook',
     'rpi-mqtt-monitor':'hjelev/rpi-mqtt-monitor',
     'rust':'rust-lang/rust',
     'sliver':'BishopFox/sliver',
@@ -145,5 +162,10 @@ supported = {
     'vault':'hashicorp/vault',
     'vscode':'microsoft/vscode',
     'vue':'VUE/VUE',
+    'wordpress':'WordPress/WordPress',
     'zinc':'zinclabs/zinc',
+    'openssl':'openssl/openssl',
+    'opensearch':'opensearch-project/OpenSearch',
+    'zabbix/zabbix':'zabbix/zabbix',
+    'varnish':'varnishcache/varnish-cache',
 }
