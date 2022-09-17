@@ -9,7 +9,8 @@ Check a list of software for its latest version and release date using different
     Options:
         -a, --all    - list all supported github repositories
         --html       - generates html file with versions
-        -t           - prints the result as markdown/jira table
+        -p , --print - prints the result as html on screen
+        -t , --table - prints the result as markdown/jira table
         -s, --silent - display only the version
         -S, --simple - hide header and description
         -h, --help   - shows this message

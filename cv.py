@@ -14,26 +14,6 @@ github_url_tags = 'https://api.github.com/repos/{}/tags'
 endoflife_url = 'https://endoflife.date/api/{}.json'
 html_file = os.path.join(sys.path[0], "html/index.html")
 
-help = '''Usage:  cv [OPTION] [SOFTWARE]...
-    or:  cv [SOFTWARE]...
-    or:  cv
-    
-Checks SOFTWARE(S) latest version and release date using different APIs
-
-Options:
-    -a, --all    - list all supported github repositories
-    --html       - generates html file with versions
-    -t           - prints the result as markdown/jira table
-    -s, --silent - display only the version
-    -S, --simple - hide header and description
-    -h, --help   - shows this message
-
-Examples:
-    cv
-    cv nginx
-    cv -s nginx
-    cv apache nginx vue
-    cv -all'''
 
 def check_eoflife(name):
     try:
@@ -95,12 +75,13 @@ def check_github_tags(name):
             if 'Version' in version:
                 version = version.split(' ')[2]
             if '-' in version:
-                version = version.split('-')[1]
+                for v in version.split('-'):                
+                    if not any(c.isalpha() for c in v):
+                        version = v
 
             return(repo_name, version, " ", " ")
             
     except urllib.error.HTTPError as e:
-        github_url_tags(name)
         print('HTTPError: {} Github tags for {} not found!'.format(e.code, name))
     except urllib.error.URLError as e:
         print('URLError: {} '.format(e.reason))
@@ -176,66 +157,39 @@ def check_versions(names):
     return(versions)
     
     
-def save_html(versions, html_file):
+def save_html(versions, html_file, options):
 
-    html_header = """<html>
-    <head>
-        <title>Versions</title>
-        <style>
-            html {
-                font-family: 'helvetica neue', helvetica, arial, sans-serif;
-            }
-            table {
-                border-collapse: collapse;
-                width: 100%;
-            }
-
-            th, td {
-                text-align: left;
-                padding: 8px;
-            }
-
-            tr:nth-child(even) {
-                background-color: #D6EEEE;
-            }
-        </style>
-    </head>
-    <body>
-        <table class="tg">
-        <thead>
-            <tr>
-                <th>Software Name</th>
-                <th>Latest Version</th>
-                <th>Release Date</th>
-            </tr>
-    """
-    html_footer = """
-        </tbody>
-        </table>
-        {}
-        </body>
-        </html>
-    """
     e = datetime.datetime.now()
     timestamp = "<p><small>Versions checked on %s/%s/%s at %s:%s:%s.</small></p>" % (e.day, e.month, e.year, e.hour, e.minute, e.second)
-    with open( html_file, "w") as txt_file:
-        txt_file.write(html_header)
-        link = False
-        for line in versions:
-            if len(line) > 3:
-                link = line[-1]
-                line.pop()
-                line.pop(0)
-            
-            txt_file.write('    <tr>\n')
-            for x, value in enumerate(line):
-                if x == 1 and link:
-                    txt_file.write("            <td><a href='{}' target='_blank'>{}</a></td>".format(link, value) + "\n")
-                else:
-                    txt_file.write("            <td>{}</td>".format(value) + "\n")
-            txt_file.write('    </tr>\n')
-            
-        txt_file.write(html_footer.format(timestamp))
+    html_content = db.html_header
+    
+
+    link = False
+    for line in versions:
+        if len(line) > 3:
+            link = line[-1]
+            line.pop()
+            line.pop(0)
+        
+        html_content =(html_content + '    <tr>\n')
+        for x, value in enumerate(line):
+            if x == 1 and link:
+                html_content = (html_content + "            <td><a href='{}' target='_blank'>{}</a></td>".format(link, value) + "\n")
+            else:
+                html_content = (html_content + "            <td>{}</td>".format(value) + "\n")
+        html_content = (html_content + '    </tr>\n')
+        
+    html_content = (html_content + db.html_footer.format(timestamp))
+    
+    if 'print html' in options:
+        print(html_content)
+    else:
+        with open( html_file, "w") as txt_file:
+            try:
+                txt_file.write(html_content)
+                print(f'HTML result is saved as: {html_file}')
+            except:
+                print(f'Unable to save html file in {html_file}')
 
 def check_arguments(arguments):
     arguments.pop(0)
@@ -251,11 +205,11 @@ def check_arguments(arguments):
     
 
 def process_args(args):
-    valid_args = ['-a', '--all', '-h', '--help', '--html', '-s', '--silent', '-t', '--table', '-l', '-S', '--simple'] 
+    valid_args = ['-p', '--print', '-a', '--all', '-h', '--help', '--html', '-s', '--silent', '-t', '--table', '-l', '-S', '--simple'] 
     options = []
     
     if '-h' in args or '--help' in args:
-        print(help)
+        print(db.help)
         exit()
     elif '-l' in args:
         print(github_url)
@@ -275,7 +229,9 @@ def process_args(args):
         options.append('silent')
     elif '-S' in args or '--simple' in args:
         options.append('simple')
-        
+    elif '-p' in args or '--print' in args:
+        options.append('print html')
+            
     for arg in args:
         if arg not in valid_args: 
             print('Unrecognized option: {} \ncheck cv --help'.format(arg))
@@ -289,9 +245,8 @@ def main():
     options = process_args(args)            
     versions = check_versions(names)
 
-    if 'html' in options: 
-        save_html(versions, html_file)
-        print('HTML reult for {} saved as: {}'.format(names, html_file))
+    if 'html' in options or 'print html' in options: 
+        save_html(versions, html_file, options)
     else:
         print_version(versions, options)
 
