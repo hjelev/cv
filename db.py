@@ -168,4 +168,5 @@ supported = {
     'opensearch':'opensearch-project/OpenSearch',
     'zabbix/zabbix':'zabbix/zabbix',
     'varnish':'varnishcache/varnish-cache',
+    'typo3':'TYPO3/typo3',
 }

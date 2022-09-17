@@ -8,7 +8,7 @@ import os
 import collections
 
 # list of sofware names to check by default
-default_names = ["php", "nginx", "apache"]
+default_names = ["php", "apache"]
 github_api = 'https://api.github.com/repos/{}'
 github_url = 'https://api.github.com/repos/{}/releases/latest'
 github_url_tags = 'https://api.github.com/repos/{}/tags'
@@ -49,7 +49,6 @@ def print_version(versions, options):
     else:   
         print("{:<30} {:<10} {:<15} {}\n".format("Name", "Version", "Release Date", "Link"))
         
-        
     for version in versions:       
         original_name, name, version, date, link, *_ = version
         if 'table' in options:
@@ -64,10 +63,12 @@ def print_version(versions, options):
                                     not 'simple' in options and \
                                     not 'table' in options:
         print('\nDescription: ' + get_github_description(db.supported[original_name]))        
-      
+
+
 def has_numbers(inputString):
     return any(char.isdigit() for char in inputString)
-            
+
+      
 def check_github_tags(name):
     try:
         with urllib.request.urlopen(github_url_tags.format(name)) as url:
@@ -198,7 +199,6 @@ def check_versions(names):
     
     
 def save_html(versions, html_file, options):
-
     e = datetime.datetime.now()
     timestamp = f"<p><small>Versions checked on {e.day}/{e.month}/{e.year} at {e.hour}:{e.minute}:{e.second}.</small></p>"
     html_content = db.html_header
@@ -209,12 +209,14 @@ def save_html(versions, html_file, options):
             line.pop()
             line.pop(0)
         
-        html_content =(html_content + '    <tr>\n')
+        html_content = (html_content + '    <tr>\n')
         for x, value in enumerate(line):
             if x == 1 and link:
-                html_content = (html_content + "            <td><a href='{}' target='_blank'>{}</a></td>".format(link, value) + "\n")
+                html_content = (html_content +\
+                     "            <td><a href='{}' target='_blank'>{}</a></td>".format(link, value) + "\n")
             else:
-                html_content = (html_content + "            <td>{}</td>".format(value) + "\n")
+                html_content = (html_content +\
+                     "            <td>{}</td>".format(value) + "\n")
         html_content = (html_content + '    </tr>\n')
         
     html_content = (html_content + db.html_footer.format(timestamp))
@@ -228,6 +230,7 @@ def save_html(versions, html_file, options):
                 print(f'HTML result is saved as: {html_file}')
             except:
                 print(f'Unable to save html file in {html_file}')
+
 
 def check_arguments(arguments):
     arguments.pop(0)
