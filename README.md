@@ -50,11 +50,11 @@ Name                           Version    Release Date    Link
 apache                         2.4.54     2012-02-21      https://downloads.apache.org/httpd/Announcement2.4.html
 php                            8.1.10     2021-11-23      https://endoflife.date/php
 nginx                          1.23.1     2022-06-21      https://nginx.org/en/CHANGES
+```
 
 # Usage
 
 To use the script clone the repositoy and add a function to your .bashrc or .zshrc file like this (update the path to the script):
-```
 
 ```
 cv() {
