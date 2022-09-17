@@ -11,6 +11,7 @@ Check a list of software for its latest version and release date using different
         --html       - generates html file with versions
         -t           - prints the result as markdown/jira table
         -s, --silent - display only the version
+        -S, --simple - hide header and description
         -h, --help   - shows this message
 
     Examples:

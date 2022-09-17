@@ -7,8 +7,7 @@ import os
 import collections
 
 # list of sofware names to check by default
-names = ["php", "nginx", "apache"]
-names.sort()
+default_names = ["php", "nginx", "apache"]
 github_api = 'https://api.github.com/repos/{}'
 github_url = 'https://api.github.com/repos/{}/releases/latest'
 github_url_tags = 'https://api.github.com/repos/{}/tags'
@@ -26,6 +25,7 @@ Options:
     --html       - generates html file with versions
     -t           - prints the result as markdown/jira table
     -s, --silent - display only the version
+    -S, --simple - hide header and description
     -h, --help   - shows this message
 
 Examples:
@@ -59,10 +59,10 @@ def check_eoflife(name):
         exit()
 
    
-def print_version(versions, silent):
-    if table :
+def print_version(versions, options):
+    if 'table' in options :
         print("||{:<28}||{:<8}||{:<15}||{}||".format("Name", "Version", "Release Date","Link"))
-    elif silent:
+    elif 'silent' in options or 'simple' in options:
         pass
     else:   
         print("{:<30} {:<10} {:<15} {}\n".format("Name", "Version", "Release Date", "Link"))
@@ -70,14 +70,14 @@ def print_version(versions, silent):
         
     for version in versions:       
         original_name, name, version, date, link, *_ = version
-        if table:
+        if 'table' in options:
             print("|{:<29}|{:<9}|{:<17}|{:<60}|".format(original_name, version, date, link))
-        elif silent:
+        elif 'silent' in options:
             print("{:<9}".format( version))
         else:
             print("{:<30} {:<10} {:<15} {}".format(original_name, version, date, link))   
 
-    if len(versions) == 1 and original_name in db.supported and not silent:
+    if len(versions) == 1 and original_name in db.supported and not 'silent' in options and not 'simple' in options:
         print('\nDescription: ' + get_github_description(db.supported[original_name]))        
       
         
@@ -136,10 +136,10 @@ def check_github(name):
             elif 'Version' in version:
                 version = version.split(' ')[2]
             elif '-' in version:
-                if any(c.isalpha() for c in version.split('-')):
-                    version = version.split('-')[1]
-                else:
-                    version = version.split('-')[0]                   
+                for v in version.split('-'):                
+                    if not any(c.isalpha() for c in v):
+                        version = v
+                 
             elif 'n' in version:
                 version = version.split('n')[1]
             elif '@' in version:
@@ -237,56 +237,63 @@ def save_html(versions, html_file):
             
         txt_file.write(html_footer.format(timestamp))
 
-            
-def main():  
-    global table   
-    global names    
-    # global html
-    silent = False
-    table = False
-    html = False  
-         
-    if len(sys.argv) >1 and sys.argv[1] == '-t':    
-        table = True
-        
-    elif len(sys.argv) >1 and sys.argv[1] == '-l':    
+def check_arguments(arguments):
+    arguments.pop(0)
+    args = []
+    names = []
+    
+    for arg in arguments:
+        if arg.startswith('-'): args.append(arg)
+        else: names.append(arg)
+    if len(names) < 1 : names = default_names
+    
+    return(args, names)
+    
+
+def process_args(args):
+    valid_args = ['-a', '--all', '-h', '--help', '--html', '-s', '--silent', '-t', '--table', '-l', '-S', '--simple'] 
+    options = []
+    
+    if '-h' in args or '--help' in args:
+        print(help)
+        exit()
+    elif '-l' in args:
         print(github_url)
         print(github_url_tags)
         print(endoflife_url)
-        return
-        
-    elif len(sys.argv) >1 and (sys.argv[1] == '--all' or sys.argv[1] == '-a'):      
+        exit()
+    elif '-t' in args or '--table' in args:
+        options.append('table')
+    elif '-a' in args or '--all' in args:
         for software in collections.OrderedDict(sorted(db.supported.items())):
             print('{:<30} - https://github.com/{}'.format(software, db.supported[software]))     
-        print('\n{} Supported github repositories'.format(len(db.supported)))       
-        return
-               
-    elif len(sys.argv) >1 and sys.argv[1] == '--html':
-        html = True
-        names = list(sys.argv)[2:]
-                      
-    elif len(sys.argv) >1 and (sys.argv[1] == '--silent' or sys.argv[1] == '-s'):
-        silent = True
-        names = list(sys.argv)[2:]
+        print('\n{} Supported github repositories'.format(len(db.supported)))          
+        exit()
+    elif '--html' in args:
+        options.append('html')
+    elif '-s' in args or '--silent' in args:
+        options.append('silent')
+    elif '-S' in args or '--simple' in args:
+        options.append('simple')
         
-    elif len(sys.argv) >1 and not sys.argv[1].startswith('-'):
-        names = list(sys.argv)[1:]
-        
-    elif len(sys.argv) >1 and (sys.argv[1] == '-h' or sys.argv[1] == '--help'):
-        print(help)
-        return
-        
-    elif len(sys.argv) >1 and sys.argv[1].startswith('-'):
-        print('Unrecognized option: {} \ncheck cv --help'.format(sys.argv[1]))
-        return
-        
+    for arg in args:
+        if arg not in valid_args: 
+            print('Unrecognized option: {} \ncheck cv --help'.format(arg))
+            exit()      
+            
+    return(options)
+    
+    
+def main():      
+    args, names = check_arguments(sys.argv)
+    options = process_args(args)            
     versions = check_versions(names)
 
-    if html: 
+    if 'html' in options: 
         save_html(versions, html_file)
-        print('HTML saved as: {}'.format(html_file))
+        print('HTML reult for {} saved as: {}'.format(names, html_file))
     else:
-        print_version(versions, silent)
+        print_version(versions, options)
 
 if __name__ == '__main__':
     main()
