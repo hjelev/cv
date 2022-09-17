@@ -32,6 +32,7 @@ Check a list of software for its latest version and release date using different
     terraform                      1.2.9      2022-09-07      https://github.com/hashicorp/terraform/releases/tag/v1.2.9
     vue                            3.3.0      2015-10-08      https://github.com/VUE/VUE/releases/tag/3.3.0
 
+
     > cv fff                                                  
     Name                           Version    Release Date    Link
 
