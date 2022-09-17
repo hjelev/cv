@@ -79,4 +79,8 @@ supported = {
     'notes':'nuttyartist/notes',
     'rocketchat':'RocketChat/Rocket.Chat',
     'penpot':'penpot/penpot',
+    'flagger':'fluxcd/flagger',
+    'lazygit':'jesseduffield/lazygit',
+    'lazydocker':'jesseduffield/lazydocker',
+    'playnite':'JosefNemec/Playnite',
 }
