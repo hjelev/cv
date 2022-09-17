@@ -76,4 +76,7 @@ supported = {
     'vscode':'microsoft/vscode',
     'vue':'VUE/VUE',
     'zinc':'zinclabs/zinc',
+    'notes':'nuttyartist/notes',
+    'rocketchat':'RocketChat/Rocket.Chat',
+    'penpot':'penpot/penpot',
 }
