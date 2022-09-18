@@ -66,92 +66,122 @@ cv() {
 
 # Supported software
 
-## 82 Github repos
+## 113 Github repos
 | Software name  | Repository link |
 | -------------- | ----------------|
-| adguardhome | https://github.com/AdguardTeam/AdGuardHome|
-| angular | https://github.com/angular/angular|
-| astro | https://github.com/withastro/astro|
-| bat | https://github.com/sharkdp/bat|
-| bootkube | https://github.com/kubernetes-retired/bootkube|
-| bootstrap | https://github.com/twbs/bootstrap|
-| bpytop | https://github.com/aristocratos/bpytop|
-| btop | https://github.com/aristocratos/btop| 
-| calibre | https://github.com/kovidgoyal/calibre|
-| charts | https://github.com/danielgindi/Charts|
-| curl | https://github.com/curl/curl|
-| cv | https://github.com/hjelev/cv|
-| d3 | https://github.com/d3/d3|
-| drawio | https://github.com/jgraph/drawio|
-| duf | https://github.com/muesli/duf|
-| elixir | https://github.com/elixir-lang/elixir|
-| ember.js | https://github.com/emberjs/ember.js|
-| exa | https://github.com/ogham/exa|
-| fd | https://github.com/sharkdp/fd|
-| fff | https://github.com/dylanaraps/fff|
-| ffmpeg | https://github.com/FFmpeg/FFmpeg|
-| flagger | https://github.com/fluxcd/flagger|
-| flameshot | https://github.com/flameshot-org/flameshot|
-| gardener | https://github.com/gardener/gardener|
-| glog | https://github.com/google/glog|
-| greenshot | https://github.com/greenshot/greenshot|
-| headscale | https://github.com/juanfont/headscale|
-| helix | https://github.com/helix-editor/helix|
-| helm | https://github.com/helm/helm|
-| home-assistant | https://github.com/home-assistant/core|
-| httpie | https://github.com/httpie/httpie|
-| imagemagick | https://github.com/ImageMagick/ImageMagick|
-| imagemagick6 | https://github.com/ImageMagick/ImageMagick6|
-| immich | https://github.com/immich-app/immich|
-| jinja | https://github.com/pallets/jinja|
-| joomla | https://github.com/joomla/joomla-cms|
-| jq | https://github.com/stedolan/jq|
-| jquery | https://github.com/jquery/jquery|
-| k9s | https://github.com/derailed/k9s|
-| keda | https://github.com/kedacore/keda|
-| kind | https://github.com/kubernetes-sigs/kind|
-| kops | https://github.com/kubernetes/kops|
-| kube-shell | https://github.com/cloudnativelabs/kube-shell|
-| kubernetes | https://github.com/kubernetes/kubernetes|
-| lapce | https://github.com/lapce/lapce|
-| lazydocker | https://github.com/jesseduffield/lazydocker|
-| lazygit | https://github.com/jesseduffield/lazygit|
-| metalk8s | https://github.com/scality/metalk8s|
-| nextcloud-desktop | https://github.com/nextcloud/desktop|
-| nextcloud-server | https://github.com/nextcloud/server|
-| node | https://github.com/nodejs/node|
-| nodejs | https://github.com/nodejs/node|
-| notes | https://github.com/nuttyartist/notes|
-| octant | https://github.com/vmware-tanzu/octant|
-| openvr | https://github.com/ValveSoftware/openvr|
-| pelican | https://github.com/getpelican/pelican|
-| penpot | https://github.com/penpot/penpot|
-| pi-hole | https://github.com/pi-hole/pi-hole|
-| playnite | https://github.com/JosefNemec/Playnite|
-| playwright | https://github.com/microsoft/playwright|
-| pocketbase | https://github.com/pocketbase/pocketbase|
-| popeye | https://github.com/derailed/popeye|
-| portainer | https://github.com/portainer/portainer|
-| powertoys | https://github.com/microsoft/PowerToys|
-| proton | https://github.com/ValveSoftware/Proton|
-| rails | https://github.com/rails/rails|
-| rancher | https://github.com/rancher/rancher|
-| react | https://github.com/facebook/react|
-| redis | https://github.com/redis/redis|
-| revanced | https://github.com/revanced/revanced-manager|
-| rocketchat | https://github.com/RocketChat/Rocket.Chat|
-| rpi-mqtt-monitor | https://github.com/hjelev/rpi-mqtt-monitor|
-| rust | https://github.com/rust-lang/rust|
-| sliver | https://github.com/BishopFox/sliver|
-| steam-audio | https://github.com/ValveSoftware/steam-audio|
-| tarantool | https://github.com/tarantool/tarantool|
-| terraform-provider-myrasec | https://github.com/Myra-Security-GmbH/terraform-provider-myrasec|
-| terraform | https://github.com/hashicorp/terraform|
-| thanos | https://github.com/thanos-io/thanos|
-| typescript | https://github.com/microsoft/TypeScript|
-| vscode | https://github.com/microsoft/vscode|
-| vue | https://github.com/VUE/VUE|
-| zinc | https://github.com/zinclabs/zinc|
+| adguardhome | AdguardTeam/AdGuardHome |
+| angular | angular/angular |
+| ansible | ansible/ansible |
+| apache-airflow | apache/airflow |
+| apache-hbase | apache/hbase |
+| apache-log4j | apache/logging-log4j2 |
+| apache-tomcat | apache/tomcat |
+| astro | withastro/astro |
+| bat | sharkdp/bat |
+| bcal | jarun/bcal |
+| bootkube | kubernetes-retired/bootkube |
+| bootstrap | twbs/bootstrap |
+| bpytop | aristocratos/bpytop |
+| btop | aristocratos/btop | 
+| buku | jarun/buku |
+| calibre | kovidgoyal/calibre |
+| charts | danielgindi/Charts |
+| consul | hashicorp/consul |
+| curl | curl/curl |
+| cv | hjelev/cv |
+| d3 | d3/d3 |
+| ddgr | jarun/ddgr |
+| drawio | jgraph/drawio |
+| duf | muesli/duf |
+| electron | electron/electron |
+| elixir | elixir-lang/elixir |
+| ember.js | emberjs/ember.js |
+| exa | ogham/exa |
+| fd | sharkdp/fd |
+| fff | dylanaraps/fff |
+| ffmpeg | FFmpeg/FFmpeg |
+| flagger | fluxcd/flagger |
+| flameshot | flameshot-org/flameshot |
+| gardener | gardener/gardener |
+| gitlab | gitlabhq/gitlabhq |
+| glog | google/glog |
+| godot | godotengine/godot |
+| greenshot | greenshot/greenshot |
+| haproxy | haproxy/haproxy |
+| headscale | juanfont/headscale |
+| helix | helix-editor/helix |
+| helm | helm/helm |
+| home-assistant | home-assistant/core |
+| httpie | httpie/httpie |
+| hyper | vercel/hyper |
+| imagemagick | ImageMagick/ImageMagick |
+| imagemagick6 | ImageMagick/ImageMagick6 |
+| immich | immich-app/immich |
+| jenkins | jenkinsci/jenkins |
+| jinja | pallets/jinja |
+| joomla | joomla/joomla-cms |
+| jq | stedolan/jq |
+| jquery | jquery/jquery |
+| k9s | derailed/k9s |
+| keda | kedacore/keda |
+| kind | kubernetes-sigs/kind |
+| kops | kubernetes/kops |
+| kube-shell | cloudnativelabs/kube-shell |
+| kubernetes | kubernetes/kubernetes |
+| lapce | lapce/lapce |
+| lazydocker | jesseduffield/lazydocker |
+| lazygit | jesseduffield/lazygit |
+| lua | lua/lua |
+| metalk8s | scality/metalk8s |
+| next.js | vercel/next.js |
+| nextcloud-desktop | nextcloud/desktop |
+| nextcloud-server | nextcloud/server |
+| nginx | nginx/nginx |
+| nix | NixOS/nix |
+| nnn | jarun/nnn |
+| node | nodejs/node |
+| nodejs | nodejs/node |
+| nomad | hashicorp/nomad |
+| notes | nuttyartist/notes |
+| octant | vmware-tanzu/octant |
+| opensearch | opensearch-project/OpenSearch |
+| openssl | openssl/openssl |
+| openvr | ValveSoftware/openvr |
+| pdd | jarun/pdd |
+| pelican | getpelican/pelican |
+| penpot | penpot/penpot |
+| pi-hole | pi-hole/pi-hole |
+| playnite | JosefNemec/Playnite |
+| playwright | microsoft/playwright |
+| pocketbase | pocketbase/pocketbase |
+| popeye | derailed/popeye |
+| portainer | portainer/portainer |
+| powertoys | microsoft/PowerToys |
+| proton | ValveSoftware/Proton |
+| rails | rails/rails |
+| rancher | rancher/rancher |
+| react | facebook/react |
+| redis | redis/redis |
+| revanced | revanced/revanced-manager |
+| rocketchat | RocketChat/Rocket.Chat |
+| rook | rook/rook |
+| rpi-mqtt-monitor | hjelev/rpi-mqtt-monitor |
+| rust | rust-lang/rust |
+| sliver | BishopFox/sliver |
+| steam-audio | ValveSoftware/steam-audio |
+| tarantool | tarantool/tarantool |
+| terraform-provider-myrasec | Myra-Security-GmbH/terraform-provider-myrasec |
+| terraform | hashicorp/terraform |
+| thanos | thanos-io/thanos |
+| typescript | microsoft/TypeScript |
+| typo3 | TYPO3/typo3 |
+| varnish | varnishcache/varnish-cache |
+| vault | hashicorp/vault |
+| vscode | microsoft/vscode |
+| vue | VUE/VUE |
+| wordpress | WordPress/WordPress |
+| zabbix/zabbix | zabbix/zabbix |
+| zinc | zinclabs/zinc |
 
 ## Everything listed on <https://endoflife.date>
 
