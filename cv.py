@@ -3,9 +3,12 @@ import urllib.request, urllib.error
 import json
 import sys
 import db
-import datetime
+from datetime import datetime, date
 import os
 import collections
+import pickle
+import time
+import os.path
 
 # list of sofware names to check by default
 default_names = ["php", "apache"]
@@ -14,7 +17,7 @@ github_url = 'https://api.github.com/repos/{}/releases/latest'
 github_url_tags = 'https://api.github.com/repos/{}/tags'
 endoflife_url = 'https://endoflife.date/api/{}.json'
 html_file = os.path.join(sys.path[0], "html/index.html")
-
+cache_location = os.path.join(sys.path[0], "cache")
 
 def check_eoflife(name):
     try:
@@ -33,7 +36,7 @@ def check_eoflife(name):
             return(name, version, date, link) 
             
     except urllib.error.HTTPError as e:
-        search_supported(name)
+        return(search_supported(name))
         # print('HTTPError: {} endoflife.date record for {} not found!'.format(e.code, name))
         # exit()
     except urllib.error.URLError as e:
@@ -50,7 +53,7 @@ def print_version(versions, options):
         print("{:<30} {:<10} {:<15} {}\n".format("Name", "Version", "Release Date", "Link"))
         
     for version in versions:       
-        original_name, name, version, date, link, *_ = version
+        name, version, date, link, *_ = version
         if 'table' in options:
             print("|{:<29}|{:<9}|{:<17}|{:<60}|".format(name, version, date, link))
         elif 'silent' in options:
@@ -58,16 +61,15 @@ def print_version(versions, options):
         else:
             print("{:<30} {:<10} {:<15} {}".format(name, version, date, link))   
 
-    if len(versions) == 1 and original_name in db.supported and \
+    if len(versions) == 1 and name in db.supported and \
                                     not 'silent' in options and \
                                     not 'simple' in options and \
                                     not 'table' in options:
-        print('\nDescription: ' + get_github_description(db.supported[original_name]))        
+        print('\nDescription: ' + get_github_description(db.supported[name], name))        
 
 
 def has_numbers(inputString):
     return any(char.isdigit() for char in inputString)
-
       
 def check_github_tags(name):
     try:
@@ -117,21 +119,27 @@ def check_github_tags(name):
         print('URLError: {} '.format(e.reason))
 
 
-def get_github_description(repo):          
-    try:
-        with urllib.request.urlopen(github_api.format(repo)) as url:
-            json_data = json.loads(url.read().decode())
-            description = json_data['description']
-            return(description)
-            
-    except urllib.error.HTTPError as e:
-        if e.code == 403:
-            print('Github API rate limit exceeded')
-            exit()
-        print('HTTPError: {} Github repository {} not found!'.format(e.code, repo))
-       
-    except urllib.error.URLError as e:
-        print('URLError: {} '.format(e.reason))
+def get_github_description(repo, name):   
+    description = read_description_cache(name)
+    if description:
+        return(description)
+        
+    else:    
+        try:
+            with urllib.request.urlopen(github_api.format(repo)) as url:
+                json_data = json.loads(url.read().decode())
+                description = json_data['description']
+                save_description_cache(name, description)
+                return(description)
+                
+        except urllib.error.HTTPError as e:
+            if e.code == 403:
+                print('Github API rate limit exceeded')
+                exit()
+            print('HTTPError: {} Github repository {} not found!'.format(e.code, repo))
+        
+        except urllib.error.URLError as e:
+            print('URLError: {} '.format(e.reason))
         
                                                      
 def check_github(name):
@@ -179,27 +187,81 @@ def check_github(name):
     except urllib.error.URLError as e:
         print('URLError: {} '.format(e.reason))
         exit()
-   
+
+
+def save_cache(name, version, date, link):
+    if '/' in name: name = name.split('/')[1]
+    software_data = []
+    software_data.extend([name, version, date, link])
+    pickle.dump( software_data, open( f'{cache_location}/{name}', "wb" ))
+
+
+def save_description_cache(name, description):
+    pickle.dump( description, open( f'{cache_location}/{name}_description', "wb" ))
+    
+    
+def read_cache(name, options):
+    if '/' in name: name = name.split('/')[1]
+    if 'clear' in options:
+        os.remove( f'{cache_location}/{name}' )
+    # try:
+    #     # stat = os.stat(f'{cache_location}/{name}')
+    #     # print("last modified: %s" % os.path.getmtime(f'{cache_location}/{name}')))
+    try:
+        if (datetime.today() - datetime.fromtimestamp(os.path.getmtime(f'{cache_location}/{name}'))).days == 0:
+            print('valid cache')
+    except: pass
+    #     # print(stat.st_mtime)
+    # except:
+    #     print('no cache')
+    try: 
+        return(pickle.load( open( f'{cache_location}/{name}', "rb" )))
+    except:
+        return(False)
         
-def check_versions(names):    
+
+def read_description_cache(name):
+    try: 
+        return(pickle.load( open( f'{cache_location}/{name}_description', "rb" )))
+    except:
+        return(False)
+ 
+ 
+def check_versions_api(names):
+    versions = check_versions(names,list())[0]
+    try:
+        description = get_github_description(db.supported[versions[0]], versions[0])
+    except:
+        description = " "
+    versions.append(description)
+    return(versions)
+        
+                
+def check_versions(names, options):    
     versions = []
     for name in names:
+        cache_data = read_cache(name ,options)
         original_name = name
         if name in db.supported:
             name = db.supported[name]
-            
-        if "/" in name:
+        
+        if cache_data and 'clear' not in options:
+            versions.append(cache_data)           
+        elif "/" in name:
             name, version, date, link = check_github(name)
-            versions.append([original_name, name, version, date, link])
+            versions.append([original_name, version, date, link])
         else:
             name, version, date, link = check_eoflife(name)
-            versions.append([original_name, name, version, date, link])
+            versions.append([name, version, date, link])
             
+        if not cache_data and 'clear' not in options:
+            save_cache(original_name, version, date, link)
+              
     return(versions)
     
     
 def save_html(versions, html_file, options):
-    e = datetime.datetime.now()
+    e = datetime.now()
     timestamp = f"<p><small>Versions checked on {e.day}/{e.month}/{e.year} at {e.hour}:{e.minute}:{e.second}.</small></p>"
     html_content = db.html_header
     link = False
@@ -207,8 +269,7 @@ def save_html(versions, html_file, options):
         if len(line) > 3:
             link = line[-1]
             line.pop()
-            line.pop(0)
-        
+
         html_content = (html_content + '    <tr>\n')
         for x, value in enumerate(line):
             if x == 1 and link:
@@ -251,13 +312,13 @@ def search_supported(name):
                 print('{:<30} - https://github.com/{}'.format(n, value))
                 found = True
         if not found : print(f'Found no software like {name}!')
-        exit()    
+        return("","","","")    
 
 def process_args(args, names):
     valid_args = ['-p', '--print', '-a', '--all', '-h', \
                   '--help', '--html', '-s', '--silent', \
                   '-t', '--table', '-l', '-S', '--simple',\
-                  '-f', '--find'] 
+                  '-f', '--find', '-c', '--clear'] 
     options = []    
     if '-h' in args or '--help' in args:
         print(db.help)
@@ -284,6 +345,9 @@ def process_args(args, names):
         options.append('print html')
     elif '-f' in args or '--find' in args:
         search_supported(names[0])
+        exit()
+    elif '-c' in args or '--clear' in args:
+        options.append('clear')
     for arg in args:
         if arg not in valid_args: 
             print(f'Unrecognized option: {arg} \ncheck: cv --help')
@@ -295,7 +359,7 @@ def process_args(args, names):
 def main():      
     args, names = check_arguments(sys.argv)
     options = process_args(args, names)            
-    versions = check_versions(names)
+    versions = check_versions(names, options)
 
     if 'html' in options or 'print html' in options: 
         save_html(versions, html_file, options)

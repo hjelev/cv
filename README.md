@@ -13,6 +13,7 @@ Check a list of software for its latest version and release date using different
         -t , --table - prints the result as markdown/jira table
         -s, --silent - display only the version
         -S, --simple - hide header and description
+        -c, --clear  - clear cache for specified software
         -f, --find   - search supported software list
         -h, --help   - shows this message
 

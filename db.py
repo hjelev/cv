@@ -11,6 +11,7 @@ Options:
     -t           - prints the result as markdown/jira table
     -s, --silent - display only the version
     -S, --simple - hide header and description
+    -c, --clear  - clear cache for specified software
     -f, --find   - search supported software list
     -h, --help   - shows this message
 
@@ -77,7 +78,7 @@ supported = {
     'btop':'aristocratos/btop', 
     'buku':'jarun/buku',
     'calibre':'kovidgoyal/calibre',
-    'charts':'danielgindi/Charts',
+    'chartjs':'chartjs/Chart.js',
     'consul':'hashicorp/consul',
     'curl':'curl/curl',
     'cv':'hjelev/cv',
@@ -170,8 +171,10 @@ supported = {
     'varnish':'varnishcache/varnish-cache',
     'vault':'hashicorp/vault',
     'vscode':'microsoft/vscode',
-    'vue':'VUE/VUE',
+    'vue':'vuejs/core',
     'wordpress':'WordPress/WordPress',
     'zabbix/zabbix':'zabbix/zabbix',
     'zinc':'zinclabs/zinc',
+    'rabbitmq':'rabbitmq/rabbitmq-server',
+    'coroot':'coroot/coroot',
 }
