@@ -19,6 +19,7 @@ endoflife_url = 'https://endoflife.date/api/{}.json'
 html_file = os.path.join(sys.path[0], "html/index.html")
 cache_location = os.path.join(sys.path[0], "cache")
 
+
 def check_eoflife(name):
     try:
         with urllib.request.urlopen(endoflife_url.format(name)) as url:
@@ -71,6 +72,7 @@ def print_version(versions, options):
 def has_numbers(inputString):
     return any(char.isdigit() for char in inputString)
       
+
 def check_github_tags(name):
     try:
         with urllib.request.urlopen(github_url_tags.format(name)) as url:
@@ -314,6 +316,7 @@ def search_supported(name):
         if not found : print(f'Found no software like {name}!')
         return("","","","")    
 
+
 def process_args(args, names):
     valid_args = ['-p', '--print', '-a', '--all', '-h', \
                   '--help', '--html', '-s', '--silent', \
@@ -365,6 +368,7 @@ def main():
         save_html(versions, html_file, options)
     else:
         print_version(versions, options)
+
 
 if __name__ == '__main__':
     main()
