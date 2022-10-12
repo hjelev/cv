@@ -1,4 +1,4 @@
-# cv
+# cv - Check Version
 
 Check a list of software for its latest version and release date using different APIs.
 
