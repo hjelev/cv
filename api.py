@@ -32,14 +32,5 @@ def check_version(name):
     return jsonify(response)
 
 
-def human_format(num):
-    magnitude = 0
-    while abs(num) >= 1000:
-        magnitude += 1
-        num /= 1000.0
-    # add more suffixes if you need them
-    return '%.1f%s' % (num, ['', 'K', 'M', 'G', 'T', 'P'][magnitude])
-
 if __name__ == "__main__":
-
-    app.run(host='0.0.0.0', port=8889)
+    app.run(host='0.0.0.0', port=8080)

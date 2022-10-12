@@ -1,21 +1,35 @@
-help = '''Usage:  cv [OPTION] [SOFTWARE]...
+class color:
+   PURPLE = '\033[95m'
+   CYAN = '\033[96m'
+   DARKCYAN = '\033[36m'
+   BLUE = '\033[94m'
+   GREEN = '\033[92m'
+   YELLOW = '\033[93m'
+   RED = '\033[91m'
+   BOLD = '\033[1m'
+   UNDERLINE = '\033[4m'
+   END = '\033[0m'
+
+
+help = f'''{color.BOLD}Usage:{color.END}  cv [OPTION] [SOFTWARE]...
     or:  cv [SOFTWARE]...
     or:  cv
     
 Checks SOFTWARE(S) latest version and release date using different APIs
 
-Options:
+{color.BOLD}Options:{color.END}
     -a, --all    - list all supported github repositories
     --html       - generates and saves html file with versions
     -p , --print - prints the result as html on screen
     -t           - prints the result as markdown/jira table
     -s, --silent - display only the version
     -S, --simple - hide header and description
-    -c, --clear  - clear cache for specified software
+    -c, --clear  - clear cache for specified [SOFTWARE]...
     -f, --find   - search supported software list
+    -g, --github - search for github repositories
     -h, --help   - shows this message
 
-Examples:
+{color.BOLD}Examples:{color.END}
     cv
     cv nginx
     cv -s nginx
@@ -177,4 +191,6 @@ supported = {
     'zinc':'zinclabs/zinc',
     'rabbitmq':'rabbitmq/rabbitmq-server',
     'coroot':'coroot/coroot',
+    'flask':'pallets/flask',
+    'terraform-provider-aws':'hashicorp/terraform-provider-aws',
 }

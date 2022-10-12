@@ -1,24 +1,25 @@
-from re import I
-import urllib.request, urllib.error
-import json
-import sys
-import db
-from datetime import datetime, date
-import os
 import collections
-import pickle
-import time
+import json
+import os
 import os.path
+import pickle
+import sys
+import urllib.error
+import urllib.request
+from datetime import datetime
+
+import db
 
 # list of sofware names to check by default
 default_names = ["php", "apache"]
 github_api = 'https://api.github.com/repos/{}'
 github_url = 'https://api.github.com/repos/{}/releases/latest'
 github_url_tags = 'https://api.github.com/repos/{}/tags'
+github_search = 'https://api.github.com/search/repositories?q={}'
 endoflife_url = 'https://endoflife.date/api/{}.json'
 html_file = os.path.join(sys.path[0], "html/index.html")
 cache_location = os.path.join(sys.path[0], "cache")
-
+cache_enabled = True
 
 def check_eoflife(name):
     try:
@@ -42,10 +43,11 @@ def check_eoflife(name):
         # exit()
     except urllib.error.URLError as e:
         print('URLError: {} '.format(e.reason))
-        exit()
+        exit(1)
 
    
 def print_version(versions, options):
+    if versions[0][1] == "": exit(1)
     if 'table' in options :
         print("||{:<28}||{:<8}||{:<15}||{}||".format("Name", "Version", "Release Date","Link"))
     elif 'silent' in options or 'simple' in options:
@@ -81,8 +83,10 @@ def check_github_tags(name):
                 if has_numbers(tag_data['name']) and 'dev' not in tag_data['name']\
                                                  and 'alpha' not in tag_data['name']\
                                                  and 'dev' not in tag_data['name']:
-                    json_data = tag_data
-                    
+                    json_data = tag_data  
+            if len(json_data) == 0:
+                print(f"No version information found for {db.color.BOLD}{name}{db.color.END} !")
+                exit(1)         
             date = json_data['commit']['url']
 
             with urllib.request.urlopen(date) as url:
@@ -114,12 +118,12 @@ def check_github_tags(name):
     except urllib.error.HTTPError as e:
         if e.code == 403:
             print('Github API rate limit exceeded')
-            exit()
+            exit(1)
         print('HTTPError: {} Github tags for {} not found!'.format(e.code, name))
-        exit()
+        exit(1)
     except urllib.error.URLError as e:
         print('URLError: {} '.format(e.reason))
-
+        exit(1)
 
 def get_github_description(repo, name):   
     description = read_description_cache(name)
@@ -137,7 +141,7 @@ def get_github_description(repo, name):
         except urllib.error.HTTPError as e:
             if e.code == 403:
                 print('Github API rate limit exceeded')
-                exit()
+                exit(1)
             print('HTTPError: {} Github repository {} not found!'.format(e.code, repo))
         
         except urllib.error.URLError as e:
@@ -181,14 +185,15 @@ def check_github(name):
         # print('HTTPError: {} Github repository {} not found!'.format(e.code, name))
         if e.code == 403:
             print('Github API rate limit exceeded')
-            exit()
+            exit(1)
         elif e.code == 404:
             return(check_github_tags(name))
-        else: exit()
+
+        else: exit(1)
         
     except urllib.error.URLError as e:
         print('URLError: {} '.format(e.reason))
-        exit()
+        exit(1)
 
 
 def save_cache(name, version, date, link):
@@ -203,19 +208,23 @@ def save_description_cache(name, description):
     
     
 def read_cache(name, options):
-    if '/' in name: name = name.split('/')[1]
+    if not cache_enabled: return False
+    if '/' in name: 
+        name = name.split('/')[1]
+
     if 'clear' in options:
-        os.remove( f'{cache_location}/{name}' )
-    # try:
-    #     # stat = os.stat(f'{cache_location}/{name}')
-    #     # print("last modified: %s" % os.path.getmtime(f'{cache_location}/{name}')))
+        try:
+            os.remove( f'{cache_location}/{name}' )
+        except OSError as e:
+            pass
+
     try:
         if (datetime.today() - datetime.fromtimestamp(os.path.getmtime(f'{cache_location}/{name}'))).days == 0:
-            print('valid cache')
+            pass
+        else:
+            os.remove( f'{cache_location}/{name}' )
     except: pass
-    #     # print(stat.st_mtime)
-    # except:
-    #     print('no cache')
+
     try: 
         return(pickle.load( open( f'{cache_location}/{name}', "rb" )))
     except:
@@ -223,6 +232,7 @@ def read_cache(name, options):
         
 
 def read_description_cache(name):
+    if not cache_enabled: return False
     try: 
         return(pickle.load( open( f'{cache_location}/{name}_description', "rb" )))
     except:
@@ -313,16 +323,42 @@ def search_supported(name):
             if name in value:
                 print('{:<30} - https://github.com/{}'.format(n, value))
                 found = True
-        if not found : print(f'Found no software like {name}!')
+        if not found : 
+            print(f'Found no software like {name}!')
+            exit(404)
+            
         return("","","","")    
+
+
+def print_supported():
+    for software in collections.OrderedDict(sorted(db.supported.items())):
+        print('{:<30} - https://github.com/{}'.format(software, db.supported[software]))     
+    print('\n{} Supported github repositories'.format(len(db.supported)))      
+
+
+def search_github(name):
+    try:
+        with urllib.request.urlopen(github_search.format(name)) as url:
+            json_data = json.loads(url.read().decode())
+            for repo in json_data['items']:
+                if name in repo['name']:
+                    if name == repo['name']:
+                        print(db.color.BOLD + repo['html_url'] + ' - ' + repo['description'] + db.color.END)
+                    else:
+                        print(repo['html_url'] + ' - ' + repo['description'] )
+            exit()
+     
+    except:
+        return(False)
 
 
 def process_args(args, names):
     valid_args = ['-p', '--print', '-a', '--all', '-h', \
                   '--help', '--html', '-s', '--silent', \
                   '-t', '--table', '-l', '-S', '--simple',\
-                  '-f', '--find', '-c', '--clear'] 
-    options = []    
+                  '-f', '--find', '-c', '--clear', '-g', '--github'] 
+    options = []  
+        
     if '-h' in args or '--help' in args:
         print(db.help)
         exit()
@@ -334,9 +370,10 @@ def process_args(args, names):
     elif '-t' in args or '--table' in args:
         options.append('table')
     elif '-a' in args or '--all' in args:
-        for software in collections.OrderedDict(sorted(db.supported.items())):
-            print('{:<30} - https://github.com/{}'.format(software, db.supported[software]))     
-        print('\n{} Supported github repositories'.format(len(db.supported)))          
+        print_supported()
+        exit()
+    elif '-g' in args or '--github' in args:
+        search_github(names[0])
         exit()
     elif '--html' in args:
         options.append('html')
@@ -354,7 +391,7 @@ def process_args(args, names):
     for arg in args:
         if arg not in valid_args: 
             print(f'Unrecognized option: {arg} \ncheck: cv --help')
-            exit()      
+            exit(1)      
             
     return(options)
     
